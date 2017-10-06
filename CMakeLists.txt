@@ -26,9 +26,11 @@ set(PROJECT_NAME
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/module/Epipolar_Geometry/include
+        ${PROJECT_SOURCE_DIR}/module/Image_Feature/include
 )
 
 add_library(Epipolar_Geometry
     module/Epipolar_Geometry/src/Solve_Fundamental.cpp
     module/Epipolar_Geometry/src/Epipolar_base.cpp
+    module/Image_Feature/src/Feature_base.cpp
 )

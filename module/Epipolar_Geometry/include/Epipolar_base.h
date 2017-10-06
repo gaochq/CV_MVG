@@ -10,7 +10,6 @@
 
 #include <Eigen/Dense>
 
-
 #include "cv.h"
 #include "opencv2/core/core.hpp"
 #include "opencv2/core/eigen.hpp"
@@ -26,12 +25,26 @@ public:
     Epipolar_base();
     ~Epipolar_base();
 
-    Eigen::Matrix3d Normalize_Points(vector<cv::Point2f> Points, vector<cv::Point2f> &Norm_Points); // Normalize the keypoints
-    Eigen::MatrixXd Point2Vector(vector<cv::Point2f> Points); // Convert the keypoint from cv to eigen
-    void Point2Vector(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB,
-                      Eigen::MatrixXd &VectorA, Eigen::MatrixXd &VectorB); // Convert the keypoint from cv to eign
+    // Normalize the keypoints
+    Eigen::Matrix3d Normalize_Points(vector<cv::Point2f> Points, vector<cv::Point2f> &Norm_Points);
 
-    double Sampson_Distance(cv::Point2f PointA, cv::Point2f PointB, Eigen::Matrix3d F); // compute the Sampson distance
+    // Convert the keypoint from cv to eigen
+    Eigen::MatrixXd Point2Vector(vector<cv::Point2f> Points);
+
+    // Convert the keypoint from cv to eigen
+    void Point2Vector(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, Eigen::MatrixXd &VectorA, Eigen::MatrixXd &VectorB);
+
+    // compute the Sampson distance
+    double Sampson_Distance(cv::Point2f PointA, cv::Point2f PointB, Eigen::Matrix3d F);
+
+    // draw the epipolar lines
+    void Draw_EpipolarLines(cv::Mat F, vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &ImageA, cv::Mat &ImageB);
+
+    // Triangulate single Feature
+    void Triangulate_Feature(const cv::Point2f PointA, const cv::Point2f PointB, const cv::Mat P1, const cv::Mat P2, cv::Mat &X);
+
+    // Triangulate Features
+    void Triangulate_Features(const vector<cv::Point2f> PointA, const vector<cv::Point2f> PointB, const cv::Mat P1, const cv::Mat P2, cv::Mat &X);
 };
 } // namespace CV_MVG
 

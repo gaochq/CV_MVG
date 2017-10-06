@@ -94,6 +94,77 @@ namespace CV_MVG
         return Sampson_Distance;
     }
 
+    void Epipolar_base::Draw_EpipolarLines(cv::Mat F, vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB,
+                                           cv::Mat &ImageA, cv::Mat &ImageB)
+    {
+        vector<cv::Vec3f> Epipolar_linesA, Epipolar_linesB;
+        cv::Mat F_tr;
+
+        // Get the epipolar lines: I' = Fx
+        cv::computeCorrespondEpilines(cv::Mat(PointsA), 1, F, Epipolar_linesB);
+        cv::computeCorrespondEpilines(cv::Mat(PointsB), 2, F, Epipolar_linesA);
+
+        cv::RNG& rng = cv::theRNG();
+        for (int k = 0; k < Epipolar_linesB.size(); ++k)
+        {
+            cv::Scalar color = cv::Scalar(rng(256), rng(256), rng(256));    // Randomly generate color
+            cv::line(ImageB,
+                     cv::Point(0, -Epipolar_linesB[k][2] / Epipolar_linesB[k][1]),
+                     cv::Point(ImageB.cols, -(Epipolar_linesB[k][2] + Epipolar_linesB[k][0] * ImageB.cols) / Epipolar_linesB[k][1]),
+                     cv::Scalar(255, 255, 255));
+            cv::line(ImageA,
+                     cv::Point(0, -Epipolar_linesA[k][2] / Epipolar_linesA[k][1]),
+                     cv::Point(ImageA.cols, -(Epipolar_linesA[k][2] + Epipolar_linesA[k][0] * ImageB.cols) / Epipolar_linesA[k][1]),
+                     cv::Scalar(255, 255, 255));
+        }
+
+        vector<cv::KeyPoint> PointC, PointD;
+        cv::KeyPoint::convert(PointsA, PointC);
+        cv::KeyPoint::convert(PointsB, PointD);
+
+        cv::drawKeypoints(ImageA, PointC, ImageA, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT);
+        cv::drawKeypoints(ImageB, PointD, ImageB, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT);
+    }
+
+    // Triangulate single Feature
+    void Epipolar_base::Triangulate_Feature(const cv::Point2f PointA, const cv::Point2f PointB, const cv::Mat P1,
+                                    const cv::Mat P2, cv::Mat &X)
+    {
+        cv::Mat A(4, 4, CV_32F);
+
+        //  |vP2 - P1 |
+        //  |P0 - uP2 |
+        //  |v'P'2-P'1| X=0
+        //  |p'0-u'P'2|
+
+        A.row(0) = PointA.y*P1.row(2) - P1.row(1);
+        A.row(1) = P1.row(0) - PointA.x*P1.row(2);
+        A.row(2) = PointB.y*P2.row(2) - P2.row(1);
+        A.row(3) = P2.row(0) - PointB.x*P2.row(2);
+
+        // using SVD get the single solution
+        cv::Mat u,w,vt;
+        cv::SVD::compute(A, w, u, vt, cv::SVD::MODIFY_A|cv::SVD::FULL_UV);
+
+        X = vt.row(3).t();
+        X = X.rowRange(0, 3)/X.at<float>(3);
+    }
+
+    // Triangulate Features
+    void Epipolar_base::Triangulate_Features(const vector<cv::Point2f> PointA, const vector<cv::Point2f> PointB,
+                                            const cv::Mat P1, const cv::Mat P2, cv::Mat &X)
+    {
+        cv::Mat X_tmp(3, int(PointA.size()), CV_32FC1);
+        for (int i = 0; i < PointA.size(); ++i)
+        {
+            cv::Mat X1;
+            Triangulate_Feature(PointA[i], PointB[i], P1, P2, X1);
+            X_tmp.col(i) = X1;
+        }
+
+        X = X_tmp.clone();
+    }
+
 
 
 } // namespace CV_MVG
