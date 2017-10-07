@@ -17,6 +17,7 @@ namespace CV_MVG
 
     }
 
+    // Extract the keypoints whose match Hamming distance less than 30
     void Feature_base::Extract_GoodPoints(cv::Mat imageA, cv::Mat imageB, vector<cv::Point2f> &PointsA,
                                           vector<cv::Point2f> &PointsB)
     {

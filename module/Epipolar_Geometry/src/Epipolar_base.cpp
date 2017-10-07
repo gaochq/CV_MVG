@@ -127,15 +127,16 @@ namespace CV_MVG
     }
 
     // Triangulate single Feature
+    /*
+     *   |vP2 - P1 |
+     *   |P0 - uP2 |
+     *   |v'P'2-P'1| X=0
+     *   |p'0-u'P'2|
+     */
     void Epipolar_base::Triangulate_Feature(const cv::Point2f PointA, const cv::Point2f PointB, const cv::Mat P1,
                                     const cv::Mat P2, cv::Mat &X)
     {
         cv::Mat A(4, 4, CV_32F);
-
-        //  |vP2 - P1 |
-        //  |P0 - uP2 |
-        //  |v'P'2-P'1| X=0
-        //  |p'0-u'P'2|
 
         A.row(0) = PointA.y*P1.row(2) - P1.row(1);
         A.row(1) = P1.row(0) - PointA.x*P1.row(2);
@@ -165,6 +166,49 @@ namespace CV_MVG
         X = X_tmp.clone();
     }
 
+    // Triangulate the points on the Normalized plane
+    /*
+     *  s1x_fre = s2x_curR + t
+     *  s1x_fre = s2x_curr + t
+     *  |x_fre^Tx_fre   -x_fre^Tx_curr ||s1|=|x_fre^Tt |
+     *  |x_fre^Tx_curr  -x_curr^Tx_curr||s2| |x_curr^Tt|
+     *
+     */
+    void Epipolar_base::Triangulate_Points(const Eigen::Vector3d Point_fre, const Eigen::Vector3d Point_cur,
+                                           const Eigen::Isometry3d T, Eigen::Vector3d &X)
+    {
+        Eigen::Vector3d t = T.translation();
+        Eigen::Vector3d Point_curr = T.rotation()*Point_cur;
+        Eigen::Vector2d b = Eigen::Vector2d(t.dot(Point_fre), t.dot(Point_curr));
 
+        double A[4];
+        A[0] = Point_fre.dot(Point_fre);
+        A[1] = Point_fre.dot(Point_curr);
+        A[2] = -A[1];
+        A[3] = Point_curr.dot(Point_curr);
 
+        double d = A[0]*A[3] - A[1]*A[2];
+        Eigen::Vector2d Lambdavec =
+                Eigen::Vector2d(A[3]*b(0,0) - A[1]*b(0,1),
+                                -A[2]*b(0,0) + A[0]*b(0,1));
+
+        /* wait for test
+        Eigen::Matrix4d A_tmp;
+        A_tmp << Point_fre.dot(Point_fre), Point_fre.dot(Point_curr),
+                -A[1], Point_curr.dot(Point_curr);
+        Lambdavec = A_tmp.colPivHouseholderQr().solve(b);
+        */
+
+        Eigen::Vector3d PointA = Lambdavec(0, 0)*Point_fre;
+        Eigen::Vector3d PointB = Lambdavec(0, 1)*Point_curr;
+        X = (PointA + PointB)/2.0;
+    }
+
+    // Get Essential matrix from fundamental matrix
+    // E = K^T*F*K
+    Eigen::Matrix3d Epipolar_base::Solve_E_Martix(const Eigen::Matrix3d F, const Eigen::Matrix3d K)
+    {
+        Eigen::Matrix3d E;
+        E = K.transpose()*F*K;
+    }
 } // namespace CV_MVG

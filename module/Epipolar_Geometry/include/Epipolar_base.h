@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 #include "cv.h"
 #include "opencv2/core/core.hpp"
@@ -45,6 +46,12 @@ public:
 
     // Triangulate Features
     void Triangulate_Features(const vector<cv::Point2f> PointA, const vector<cv::Point2f> PointB, const cv::Mat P1, const cv::Mat P2, cv::Mat &X);
+
+    // Triangulate the points on the Normalized plane
+    void Triangulate_Points(const Eigen::Vector3d Point_fre, const Eigen::Vector3d Point_cur, const Eigen::Isometry3d T, Eigen::Vector3d &X);
+
+    // Solve Essential Matrix
+    Eigen::Matrix3d Solve_E_Martix(const Eigen::Matrix3d F, const Eigen::Matrix3d K);
 };
 } // namespace CV_MVG
 

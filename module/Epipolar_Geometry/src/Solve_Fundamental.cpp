@@ -21,6 +21,8 @@ namespace CV_MVG
     vector<Eigen::Matrix3d> Solve_F_Matrix::EightPoint_F_Matrix(vector<cv::Point2f> PointsA,
                                                                 vector<cv::Point2f> PointsB)
     {
+        assert(PointsA.size()>=8 && PointsB.size()>=8 && PointsA.size()==PointsB.size());
+
         vector<Eigen::Matrix3d> F_Mat;
         // Normalize the keyPoints
         Eigen::Matrix3d Norm_MatA, Norm_MatB;
@@ -74,6 +76,7 @@ namespace CV_MVG
     vector<Eigen::Matrix3d> Solve_F_Matrix::SevenPoint_F_Matrix(vector<cv::Point2f> PointsA,
                                                                 vector<cv::Point2f> PointsB)
     {
+        assert(PointsA.size()==7 &&PointsA.size()==7);
         vector<Eigen::Matrix3d> F_Mat;
         // construct the constaint condition
         Eigen::MatrixXd VectorA, VectorB;
@@ -189,7 +192,8 @@ namespace CV_MVG
                     {
                         Inner_times++;
                         data[i] = true;
-                    } else
+                    }
+                    else
                         data[i] = false;
                 }
 
@@ -203,7 +207,7 @@ namespace CV_MVG
             double a = pow(Inner_Num/PointsA.size(), PointsA.size());
             double b = log(1.0-Probe)/log(1.0-a);
             N = static_cast<long>(b);
-//        N = static_cast<int>(log(1.0-Probe)/log(1.0-pow(Inner_Num/PointsA.size(), PointsA.size())));
+
             Sample_Num++;
         }
 
@@ -223,7 +227,7 @@ namespace CV_MVG
         return F_final;
     }
 
-    Eigen::Matrix3d Solve_F_Matrix::solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask)
+    Eigen::Matrix3d Solve_F_Matrix::Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask)
     {
         Eigen::Matrix3d F;
 

@@ -47,7 +47,7 @@ public:
     Eigen::Matrix3d Ransac_F_Matrix(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask, Solve_method method);
 
     //Final sovle function
-    Eigen::Matrix3d solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask);
+    Eigen::Matrix3d Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask);
 private:
     Solve_method Method;
     float Probe;
