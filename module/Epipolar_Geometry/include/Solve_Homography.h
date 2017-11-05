@@ -42,14 +42,14 @@ public:
     Eigen::Matrix3d Ransac_H_Matrix(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask);
 
     //Final sovle function
-    Eigen::Matrix3d Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask);
+    Eigen::Matrix3d Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, Solve_method method, cv::Mat &mask);
 
 
 private:
     float Probe;
     float Outlier_thld;
     int Max_Iteration;
-    Solve_method Method;
+    Solve_method mMethod;
 
     Epipolar_base epipolar_base;
 };

@@ -32,7 +32,7 @@ public:
     };
 
 public:
-    Solve_F_Matrix(Solve_method method);
+    Solve_F_Matrix();
     ~Solve_F_Matrix();
 
     //Solve Funmental matrix using 8 Point method
@@ -44,10 +44,10 @@ public:
     vector<Eigen::Matrix3d> SevenPoint_F_Matrix(vector< std::pair<cv::Point2f, cv::Point2f> > Matches);
 
     //Solve Funmental matrix using ransac
-    Eigen::Matrix3d Ransac_F_Matrix(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask, Solve_method method);
+    Eigen::Matrix3d Ransac_F_Matrix(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat *mask, Solve_method method);
 
     //Final sovle function
-    Eigen::Matrix3d Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask);
+    Eigen::Matrix3d Solve(const vector<cv::Point2f> PointsA, const vector<cv::Point2f> PointsB, Solve_method method, cv::Mat *mask);
 private:
     Solve_method Method;
     float Probe;

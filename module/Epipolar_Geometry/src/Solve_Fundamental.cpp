@@ -7,10 +7,9 @@ using namespace std;
 
 namespace CV_MVG
 {
-    Solve_F_Matrix::Solve_F_Matrix(Solve_method method) :
+    Solve_F_Matrix::Solve_F_Matrix() :
             Probe(0.99), Outlier_thld(1.25), Max_Iteration(100)
     {
-        Method = method;
     }
 
     Solve_F_Matrix::~Solve_F_Matrix()
@@ -145,7 +144,7 @@ namespace CV_MVG
 
 
     Eigen::Matrix3d Solve_F_Matrix::Ransac_F_Matrix(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB,
-                                                    cv::Mat &mask, Solve_method method)
+                                                    cv::Mat *mask, Solve_method method)
     {
         assert(method==FM_8Point_Ransac | method==FM_7Point);
 
@@ -200,7 +199,7 @@ namespace CV_MVG
                 if (Inner_times > Inner_Num)
                 {
                     Inner_Num = Inner_times;
-                    Tmp_mask.copyTo(mask);
+                    Tmp_mask.copyTo(*mask);
                     F_final = F_tmp;
                 }
             }
@@ -214,7 +213,7 @@ namespace CV_MVG
         vector<cv::Point2f> PointsC, PointsD;
         for (int j = 0; j < PointsA.size(); ++j)
         {
-            if(!mask.at<uchar>(j,0))
+            if(!(*mask).at<uchar>(j,0))
                 continue;
 
             PointsC.push_back(PointsA[j]);
@@ -227,9 +226,11 @@ namespace CV_MVG
         return F_final;
     }
 
-    Eigen::Matrix3d Solve_F_Matrix::Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask)
+    Eigen::Matrix3d Solve_F_Matrix::Solve(const vector<cv::Point2f> PointsA, const vector<cv::Point2f> PointsB,
+                                          Solve_method method, cv::Mat *mask)
     {
         Eigen::Matrix3d F;
+        Method = method;
 
         switch(Method)
         {

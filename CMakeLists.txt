@@ -19,19 +19,28 @@ include_directories(${Ceres_INCLUDE_DIRS})
 find_package(Sophus REQUIRED)
 include_directories(${Sophus_INCLUDE_DIRS})
 
-set(PROJECT_NAME
-    ${OpenCV_LIBS}
-    ${Ceres_LIBS}
-    ${Sophus_LIBRARIES})
-
 include_directories(
     ${PROJECT_SOURCE_DIR}/module/Epipolar_Geometry/include
         ${PROJECT_SOURCE_DIR}/module/Image_Feature/include
 )
 
-add_library(Epipolar_Geometry
+add_library(${PROJECT_NAME} SHARED
     module/Epipolar_Geometry/src/Solve_Fundamental.cpp
     module/Epipolar_Geometry/src/Solve_Homography.cpp
     module/Epipolar_Geometry/src/Epipolar_base.cpp
     module/Image_Feature/src/Feature_base.cpp
 )
+
+target_link_libraries(${PROJECT_NAME}
+                    ${OpenCV_LIBS}
+                    ${Ceres_LIBS}
+                    ${Sophus_LIBRARIES})
+
+
+# Test fundamental solver
+add_executable(test_Fundamental_solver module/Epipolar_Geometry/test/Test_FundamentalSolver.cpp)
+target_link_libraries(test_Fundamental_solver ${PROJECT_NAME})
+
+# Test homography solver
+add_executable(test_Homography_solver module/Epipolar_Geometry/test/Test_HomographySolver.cpp)
+target_link_libraries(test_Homography_solver ${PROJECT_NAME})

@@ -27,7 +27,7 @@ public:
     ~Feature_base();
 
     // extract high quality orb keypoints
-    void Extract_GoodPoints(cv::Mat imageA, cv::Mat imageB, vector<cv::Point2f> &PointsA, vector<cv::Point2f> &PointsB);
+    static void Extract_GoodPoints(const cv::Mat imageA, const cv::Mat imageB, vector<cv::Point2f> &PointsA, vector<cv::Point2f> &PointsB);
 };
 } //CV_MVG
 

@@ -101,7 +101,7 @@ namespace CV_MVG
                                                     cv::Mat &mask)
     {
         assert(PointsA.size()>=4 && PointsB.size()>=4 && PointsA.size()==PointsB.size());
-        assert(Method==HM_DLT_Ransac);
+        assert(mMethod==HM_DLT_Ransac);
 
         vector<std::pair<cv::Point2f, cv::Point2f> > Matches;
         for (int i = 0; i < PointsA.size(); ++i)
@@ -167,11 +167,12 @@ namespace CV_MVG
     }
 
     //Final sovle function
-    Eigen::Matrix3d Solve_H_Matrix::Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, cv::Mat &mask)
+    Eigen::Matrix3d Solve_H_Matrix::Solve(vector<cv::Point2f> PointsA, vector<cv::Point2f> PointsB, Solve_method method, cv::Mat &mask)
     {
+        mMethod = method;
         Eigen::Matrix3d H;
 
-        switch(Method)
+        switch(mMethod)
         {
             case HM_DLT:
                 H = DLT_H_Matrix(PointsA, PointsB);
