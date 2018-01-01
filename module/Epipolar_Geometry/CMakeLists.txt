@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(Epipolar_Geometry)
 
-find_package(OpenCV 2.4.13 REQUIRED)
-include_directories(${Opencv_INLCUDE_DIRS})
-
 add_library(${PROJECT_NAME} STATIC
             src/Epipolar_base.cpp
             src/Solve_Homography.cpp

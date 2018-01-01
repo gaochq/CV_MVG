@@ -13,7 +13,6 @@ link_directories(${CMAKE_BINARY_DIR}/lib)
 # Opencv
 find_package(OpenCV 2.4.13 REQUIRED)
 include_directories(${Opencv_INLCUDE_DIRS})
-message(STATUS "    version: ${OpenCV_VERSION}")
 
 # Ceres
 find_package(Ceres REQUIRED)
@@ -32,7 +31,9 @@ include_directories(module/Epipolar_Geometry/include)
 add_subdirectory(module/Epipolar_Geometry Epipolar_Geometry)
 add_dependencies(Epipolar_Geometry Image_Feature)
 
-
+include_directories(module/LKT_Alignment/include)
+add_subdirectory(module/LKT_Alignment LKT_Alignment)
+add_dependencies(LKT_Alignment Image_Feature Epipolar_Geometry)
 
 
 

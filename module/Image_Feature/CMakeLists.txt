@@ -6,6 +6,6 @@ add_library(${PROJECT_NAME} STATIC
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE ${OpenCV_LIBS}
-        PRIVATE ${Ceres_LIBS}
+        ${CERES_LIBRARIES}
         PRIVATE ${Sophus_LIBRARIES})
 
