@@ -7,9 +7,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_module)
 
+include_directories(${CMAKE_BINARY_DIR}/include)
+link_directories(${CMAKE_BINARY_DIR}/lib)
+
 # Opencv
 find_package(OpenCV 2.4.13 REQUIRED)
 include_directories(${Opencv_INLCUDE_DIRS})
+message(STATUS "    version: ${OpenCV_VERSION}")
 
 # Ceres
 find_package(Ceres REQUIRED)
@@ -19,28 +23,16 @@ include_directories(${Ceres_INCLUDE_DIRS})
 find_package(Sophus REQUIRED)
 include_directories(${Sophus_INCLUDE_DIRS})
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}/module/Epipolar_Geometry/include
-        ${PROJECT_SOURCE_DIR}/module/Image_Feature/include
-)
+include_directories("/usr/include/eigen3")
 
-add_library(${PROJECT_NAME} SHARED
-    module/Epipolar_Geometry/src/Solve_Fundamental.cpp
-    module/Epipolar_Geometry/src/Solve_Homography.cpp
-    module/Epipolar_Geometry/src/Epipolar_base.cpp
-    module/Image_Feature/src/Feature_base.cpp
-)
+include_directories(module/Image_Feature/include)
+add_subdirectory(module/Image_Feature Image_Feature)
 
-target_link_libraries(${PROJECT_NAME}
-                    ${OpenCV_LIBS}
-                    ${Ceres_LIBS}
-                    ${Sophus_LIBRARIES})
+include_directories(module/Epipolar_Geometry/include)
+add_subdirectory(module/Epipolar_Geometry Epipolar_Geometry)
+add_dependencies(Epipolar_Geometry Image_Feature)
 
 
-# Test fundamental solver
-add_executable(test_Fundamental_solver module/Epipolar_Geometry/test/Test_FundamentalSolver.cpp)
-target_link_libraries(test_Fundamental_solver ${PROJECT_NAME})
 
-# Test homography solver
-add_executable(test_Homography_solver module/Epipolar_Geometry/test/Test_HomographySolver.cpp)
-target_link_libraries(test_Homography_solver ${PROJECT_NAME})
+
+

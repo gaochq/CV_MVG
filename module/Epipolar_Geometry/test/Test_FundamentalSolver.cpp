@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     Eigen::Matrix3d F_Mat;
     cv::Mat mask;
     CV_MVG::Solve_F_Matrix Fundamental_solver;
-    F_Mat = Fundamental_solver.Solve(PointsA, PointsB, CV_MVG::Solve_F_Matrix::FM_8Point, &mask);
+    F_Mat = Fundamental_solver.Solve(PointsA, PointsA, CV_MVG::Solve_F_Matrix::FM_8Point, &mask);
     cout<< F_Mat <<endl;
 
     cv::Mat tF_Mat;

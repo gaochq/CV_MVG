@@ -5,6 +5,7 @@
 #include "Feature_base.h"
 
 
+
 namespace CV_MVG
 {
     Feature_base::Feature_base()
