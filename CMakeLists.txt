@@ -35,5 +35,9 @@ include_directories(module/LKT_Alignment/include)
 add_subdirectory(module/LKT_Alignment LKT_Alignment)
 add_dependencies(LKT_Alignment Image_Feature Epipolar_Geometry)
 
+include_directories(module/DepthFilter/include)
+add_subdirectory(module/DepthFilter DepthFilter)
+add_dependencies(LKT_Alignment Image_Feature Epipolar_Geometry)
+
 
 
